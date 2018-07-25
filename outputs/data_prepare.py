@@ -50,6 +50,6 @@ if __name__ == '__main__':
     reviews = pd.read_csv(here / 'review.csv')
     neighbors = pd.read_csv(here / 'neighbor.csv')
     reviews = organize(reviews, neighbors)
-    output = here / 'organized_data.xlsx'
+    output = here / 'organized_data.csv'
     print('Wrting......')
-    reviews.to_excel(output)
+    reviews.to_csv(output)
