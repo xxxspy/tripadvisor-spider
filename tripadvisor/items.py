@@ -49,6 +49,7 @@ class ReviewItem(scrapy.Item):
     content = Field()
     likes = Field()
     shares = Field()
+    point = Field()
 
 
 class NeighborItem(scrapy.Item):

@@ -54,8 +54,8 @@ class Trip(CrawlSpider):
 
         selector = Selector(response)
         lst = selector.css('div#LOCATION_LIST>ul.geoList')
-        city = CityItem()
         for link in lst.xpath('.//li'):
+            city = CityItem()
             name = link.xpath('.//a/text()').extract()
             url = link.xpath('.//a/@href').extract()
             # city = City(name=name, url=url)
@@ -78,8 +78,9 @@ class Trip(CrawlSpider):
         sel = Selector(response)
         # lst = sel.css('div#FILTERED_LIST > div.listing_info')
         lst = sel.css('div.listing_info')
-        attraction = AttractionItem()
+        
         for info in lst:
+            attraction = AttractionItem()
             link = info.xpath('.//div[@class="listing_title "]/a')
             href = link.xpath('.//@href').extract()
             name = link.xpath('.//text()').extract()
@@ -163,7 +164,7 @@ class Trip(CrawlSpider):
             next_page = review_next_page(response.url, n_review)
 
             containers = sel.css('div.review-container')
-            review = ReviewItem()
+            
             # attraction info extration
             # rating
             chart = sel.css('ul.ratings_chart')[0]
@@ -184,13 +185,17 @@ class Trip(CrawlSpider):
                 nb['attraction_href'] = attraction['href']
                 yield nb
             for c in containers:
+                review = ReviewItem()
                 user_name = c.css('div.username > span').xpath('.//text()')[0].extract()
                 location = c.xpath('span.location > span').xpath(
                     './/text()').extract()
                 title = c.css('div.quote > a').xpath('.//text()').extract()
                 content = c.css('div.prw_rup.prw_reviews_text_summary_hsx').css(
                     'p.partial_entry').xpath('.//text()').extract()
-                
+                point = c.css('div.rating.reviewItemInline').xpath('.//span[1]/@class').extract()
+                self.logger.debug('-----------------------------------@@@@@@@@@')
+                point = one(point).split('_')[-1]
+                self.logger.debug(point)
                 review['content'] = one(content)
                 review['title'] = one(title)
                 review['user_name'] = user_name
@@ -201,6 +206,8 @@ class Trip(CrawlSpider):
                     './/span[@class="ui_icon thumbs-up-fill"]/following-sibling::*[1]/text()').extract()
                 review['likes'] = one(likes)
                 review['shares'] = one(shares)
+                review['point'] = point
+
                 if len(location) >0:
                     location = location[0]
                 review['location'] = location or ''
